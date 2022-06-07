@@ -59,10 +59,10 @@ let myForAll (pred) (opt) =
     | Some x -> pred x
 
 // map
-let myMap (mapping) (opt) = 
+let myMap (mapping: 'a -> 'b) (opt) : 'b option = 
     match opt with
     | None -> None
-    | Some x -> mapping x
+    | Some x -> mapping x |> Some 
 
 // map2
 let myMap2 (mapping) (opt1) (opt2) = 
@@ -70,13 +70,13 @@ let myMap2 (mapping) (opt1) (opt2) =
     | (None, None) -> None
     | (Some x, None) -> None
     | (None, Some x) -> None
-    | (Some x, Some y) -> mapping x y
+    | (Some x, Some y) -> mapping x y |> Some
 
 // orElse
 let myOrElse (ifNone) (opt) = 
     match opt with 
-    | Some x -> x
-    | None -> ifNone
+    | Some x -> opt
+    | None -> ifNone 
 
 // toArray
 let myToArray (opt) = 
