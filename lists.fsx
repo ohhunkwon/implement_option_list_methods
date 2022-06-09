@@ -5,12 +5,17 @@ let rec myAppend list1 list2 =
     | x::xr, y -> x::myAppend xr y
 
 // choose
-let rec myChoose chooser list =
-    match list with
+let rec myChoose (chooser:'a -> 'b option) (xs:'a list): 'b list =
+    match xs with
     | [] -> []
-    | x::xr -> chooser x :: myChoose chooser xr 
+    | x::xr -> 
+        let c = chooser x
+        match c with
+        | Some b -> b::(myChoose chooser xr )
+        | None -> myChoose chooser xr
 
-// collect
+
+// collect (!!!)
 let rec myCollect mapping list = 
     match list with
     | [] -> []
@@ -26,32 +31,30 @@ let rec myCompareWith comparer list1 list2 =
         let compared = comparer x y
         if compared <> 0 then compared else myCompareWith comparer xr yr
 
-// concat
+// concat (!!!)
 let rec myConcat lists = 
     match lists with
     | [], yr -> yr
     | xr, [] -> xr
     | x::xr, y -> x :: myConcat (xr, y) 
 
-// contains
+// contains (!!!)
 let rec myContains value source =
     match source with
-    | x::xr when x = value -> true
-    | x::xr when x <> value -> myContains value xr 
-    | [x] when x = value -> true
-    | [x] when x <> value -> false
-    | _ -> false
+    | x::_ when x = value -> true
+    | _::xr -> myContains value xr
+    | [] -> false
 
 // empty
 let myEmpty = []
 
-// exists
+// exists (!!!)
 let rec myExists predicate list =
     match list with
     | [] -> false
     | x::xr -> if predicate x then true else myExists predicate xr
 
-// filter
+// filter (!!!)
 let rec myFilter predicate list = 
     match list with
     | [] -> []
@@ -100,9 +103,13 @@ let myRev list =
         | head :: tail -> loop (head :: acc) tail
     loop [] list
 
-myRev [1;2;3;4;5]
-
 // scan (???)
+let myScan folder state list = 
+    match list with
+    | [] -> []
+    | x::xr -> 
+        let stateUpdated = folder state list
+        myFold folder stateUpdated list
 
 // tryFind
 let rec myTryFind predicate list = 
